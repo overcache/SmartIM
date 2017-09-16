@@ -25,12 +25,10 @@ class SmartimCommand(sublime_plugin.EventListener):
 		LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
 
 		if (currentMode == True):
-			print('enter normal mode')
 			SmartimCommand.IME = subprocess.check_output([BINPATH]).decode('utf-8').strip()
 			subprocess.call([BINPATH, LAYOUT])
 			return
 
 		if (SmartimCommand.IME == None):
 			return
-		print('enter insert mode')
 		subprocess.call([BINPATH, SmartimCommand.IME])
