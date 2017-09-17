@@ -10,8 +10,12 @@ def get_setting(key, default = None):
 class SmartimCommand(sublime_plugin.EventListener):
 	IME = None
 	PreviousMode = True
+	BINPATH = os.path.join(os.path.dirname(__file__), "im-select")
+	LAYOUT = None
+
 
 	def on_activated_async(self, view):
+		SmartimCommand.LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
 		view.settings().clear_on_change('command_mode')
 		view.settings().add_on_change('command_mode', lambda: self.callback(view))
 
@@ -21,14 +25,12 @@ class SmartimCommand(sublime_plugin.EventListener):
 
 		SmartimCommand.PreviousMode = currentMode
 
-		BINPATH = os.path.join(os.path.dirname(__file__), "im-select")
-		LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
 
 		if (currentMode == True):
-			SmartimCommand.IME = subprocess.check_output([BINPATH]).decode('utf-8').strip()
-			subprocess.call([BINPATH, LAYOUT])
+			SmartimCommand.IME = subprocess.check_output([SmartimCommand.BINPATH]).decode('utf-8').strip()
+			subprocess.call([SmartimCommand.BINPATH, SmartimCommand.LAYOUT])
 			return
 
-		if (SmartimCommand.IME == None):
+		if (SmartimCommand.IME == None or SmartimCommand.IME == SmartimCommand.LAYOUT):
 			return
-		subprocess.call([BINPATH, SmartimCommand.IME])
+		subprocess.call([SmartimCommand.BINPATH, SmartimCommand.IME])
