@@ -12,7 +12,6 @@ def get_setting(key, default):
 class SmartimCommand(sublime_plugin.EventListener):
 	def __init__(self):
 		self.BINPATH = os.path.join(sublime.packages_path(), 'SmartIM', 'im-select')
-		# self.BINPATH = os.path.join(os.path.dirname(__file__), "im-select")
 		self.LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
 		self.IMEs = {}
 		self.PreviousModes = {}
@@ -31,14 +30,6 @@ class SmartimCommand(sublime_plugin.EventListener):
 	def on_activated(self, view):
 		if debug: print('SmartIM on_activated')
 		self.vim_mode_watcher(view)
-
-	# def on_new_async(self, view):
-	# 	if debug: print('SmartIM in new Buffer')
-	# 	self.vim_mode_watcher(view)
-
-	# def on_load_async(self, view):
-	# 	if debug: print('SmartIM in load file')
-	# 	self.vim_mode_watcher(view)
 
 	def on_close(self, view):
 		if debug: print('on close')
