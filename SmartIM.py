@@ -3,20 +3,23 @@ import sublime_plugin
 import subprocess
 import os
 
+debug = False
+
 def get_setting(key, default):
 	settings = sublime.load_settings('SmartIM.sublime-settings')
 	return settings.get(key, default)
 
 class SmartimCommand(sublime_plugin.EventListener):
 	def __init__(self):
-		self.BINPATH = os.path.join(os.path.dirname(__file__), "im-select")
+		self.BINPATH = os.path.join(sublime.packages_path(), 'SmartIM', 'im-select')
+		# self.BINPATH = os.path.join(os.path.dirname(__file__), "im-select")
 		self.LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
 		self.IMEs = {}
 		self.PreviousModes = {}
 
-	def on_new_async(self, view):
-		# print('SmartIM in new Buffer')
+	def vim_mode_watcher(self, view):
 		self.LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
+		self.BINPATH = os.path.join(sublime.packages_path(), 'SmartIM', 'im-select')
 
 		id = view.id()
 		self.IMEs[id] = self.LAYOUT
@@ -24,22 +27,29 @@ class SmartimCommand(sublime_plugin.EventListener):
 		view.settings().clear_on_change('command_mode')
 		view.settings().add_on_change('command_mode', lambda: self.callback(view))
 
-	def on_load_async(self, view):
-		# print('SmartIM in load file')
-		self.LAYOUT = get_setting("keyboard_layout", "com.apple.keylayout.US")
 
-		id = view.id()
-		self.IMEs[id] = self.LAYOUT
-		self.PreviousModes[id] = None
-		view.settings().clear_on_change('command_mode')
-		view.settings().add_on_change('command_mode', lambda: self.callback(view))
+	def on_activated(self, view):
+		if debug: print('SmartIM on_activated')
+		self.vim_mode_watcher(view)
+
+	# def on_new_async(self, view):
+	# 	if debug: print('SmartIM in new Buffer')
+	# 	self.vim_mode_watcher(view)
+
+	# def on_load_async(self, view):
+	# 	if debug: print('SmartIM in load file')
+	# 	self.vim_mode_watcher(view)
 
 	def on_close(self, view):
-		# print('on close')
+		if debug: print('on close')
 		id = view.id()
 		if id in self.IMEs: del self.IMEs[id]
 		if id in self.PreviousModes: del self.PreviousModes[id]
 		view.settings().clear_on_change('command_mode')
+
+	def plugin_loaded(self, view):
+		if debug: print('SmartIM after plugin_loaded')
+		self.vim_mode_watcher(view)
 
 
 	def callback(self, view):
@@ -48,12 +58,13 @@ class SmartimCommand(sublime_plugin.EventListener):
 		
 		if (currentMode == self.PreviousModes[id]): return
 
-		# print('callback been called')
+		if debug: print('callback been called')
 		self.PreviousModes[id] = currentMode
 
-		# print("current id: %d" % id)
-		# print(self.PreviousModes)
-		# print(self.IMEs)
+		if debug:
+			print("current id: %d" % id)
+			print(self.PreviousModes)
+			print(self.IMEs)
 
 		if (currentMode == True):
 			self.IMEs[id] = subprocess.check_output([self.BINPATH]).decode('utf-8').strip()
