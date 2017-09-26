@@ -6,7 +6,7 @@ inspire by [smartim](https://github.com/ybian/smartim)
 
 ## Installation
 
-### <del>Package Control</del> ( Package Control not merge yet )
+### Package Control
 
 The easiest way to install SmartIM is with [Package Control](http://wbond.net/sublime_packages/package_control)
 
