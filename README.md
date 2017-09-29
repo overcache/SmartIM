@@ -33,3 +33,8 @@ Click "Preferences - Package Settings - SmartIM - Settings - User", then add the
 ```
 
 Replace `your_default_keyboard_id` with the ID string of your input method (which can be get via `./im-select`)
+
+### issue
+
+if you got "permission deny" issue, please fix it by:
+`chmod +x ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/SmartIM/im-select`
