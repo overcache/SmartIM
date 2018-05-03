@@ -38,3 +38,5 @@ Replace `your_default_keyboard_id` with the ID string of your input method (whic
 
 if you got "permission deny" issue, please fix it by:
 `chmod +x ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/SmartIM/im-select`
+test
+test
